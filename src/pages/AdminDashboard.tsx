@@ -95,6 +95,7 @@ const AdminDashboard: React.FC = () => {
   const [settingsSaving, setSettingsSaving] = useState(false);
   const [filteredBookings, setFilteredBookings] = useState<Booking[]>([]);
   // Today's bookings visualization state
+  const [searchTerm, setSearchTerm] = useState('');
   const [todaysBookings, setTodaysBookings] = useState<Booking[]>([]);
   const [hourlySlots, setHourlySlots] = useState<string[]>([]);
 
