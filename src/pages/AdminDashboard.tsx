@@ -762,239 +762,209 @@ const AdminDashboard: React.FC = () => {
 
         {/* Tab Content */}
         <div className="p-6">
-          {activeTab === 'bookings' && (
-            <div>
-              <h3 className="text-lg font-medium text-gray-900 mb-4">Recent Bookings</h3>
-              {loading ? (
-                <div className="flex justify-center py-8">
-                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-yellow-500"></div>
+{activeTab === 'bookings' && (
+          <div className="space-y-6">
+            {/* Bookings Header with Search and Create Button */}
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+              <div>
+                <h3 className="text-lg font-semibold text-gray-900">All Bookings</h3>
+                <p className="text-sm text-gray-600">
+                  Showing {filteredBookings.length} of {bookings.length} bookings
+                </p>
+              </div>
+
+              <div className="flex flex-col md:flex-row gap-4 w-full md:w-auto">
+                {/* Search Input */}
+                <div className="relative flex-1 md:w-80">
+                  <Search className="absolute left-3 top-2.5 h-4 w-4 text-gray-400" />
+                  <input
+                    type="text"
+                    placeholder="Search bookings by name, email, phone, workspace, status..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500"
+                  />
+                  {searchTerm && (
+                    <button
+                      onClick={() => setSearchTerm('')}
+                      className="absolute right-3 top-2.5 h-4 w-4 text-gray-400 hover:text-gray-600"
+                    >
+                      ×
+                    </button>
+                  )}
                 </div>
-              ) : bookings.length === 0 ? (
-                <div className="text-center py-8">
-                  <p className="text-gray-500">No bookings found.</p>
-                </div>
-              ) : (
-                <div className="overflow-x-auto">
-                  <table className="min-w-full divide-y divide-gray-200">
-                    <thead className="bg-gray-50">
+
+                <button
+                  onClick={() => setShowBookingForm(true)}
+                  className="bg-yellow-500 text-black px-4 py-2 rounded-md font-semibold hover:bg-yellow-600 transition-colors flex items-center whitespace-nowrap"
+                >
+                  <Plus className="w-4 h-4 mr-2" />
+                  Create Booking
+                </button>
+              </div>
+            </div>
+
+            {/* Search Results Info */}
+            {searchTerm && (
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
+                <p className="text-blue-800 text-sm">
+                  <Filter className="w-4 h-4 inline mr-1" />
+                  Search results for "{searchTerm}" - {filteredBookings.length} booking(s) found
+                </p>
+              </div>
+            )}
+
+            {/* Bookings List */}
+            <div className="bg-white rounded-lg shadow-sm overflow-hidden">
+              <div className="overflow-x-auto">
+                <table className="min-w-full divide-y divide-gray-200">
+                  <thead className="bg-gray-50">
+                    <tr>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Customer
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Workspace
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Date & Time
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Status
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Price
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Actions
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody className="bg-white divide-y divide-gray-200">
+                    {filteredBookings.length === 0 ? (
                       <tr>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Customer</th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Workspace</th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date &amp; Time</th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Duration</th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Price</th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                        <td colSpan={6} className="px-6 py-12 text-center">
+                          <Calendar className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+                          <p className="text-gray-500">
+                            {searchTerm ? 'No bookings match your search criteria' : 'No bookings found'}
+                          </p>
+                          {searchTerm && (
+                            <button
+                              onClick={() => setSearchTerm('')}
+                              className="mt-2 text-yellow-600 hover:text-yellow-500 text-sm"
+                            >
+                              Clear search
+                            </button>
+                          )}
+                        </td>
                       </tr>
-                    </thead>
-                    <tbody className="bg-white divide-y divide-gray-200">
-                      {bookings.map((booking) => (
-                        <React.Fragment key={booking.id}>
-                          <tr>
-                            <td className="px-6 py-4 whitespace-nowrap">
-                              <div className="flex items-center">
-                                <div className="ml-4">
-                                  <div className="text-sm font-medium text-gray-900">{booking.customer_name}</div>
-                                  <div className="text-sm text-gray-500 flex items-center space-x-2">
-                                    <Mail className="w-3 h-3" />
-                                    <span>{booking.customer_email}</span>
-                                  </div>
-                                  <div className="text-sm text-gray-500 flex items-center space-x-2">
-                                    <Phone className="w-3 h-3" />
-                                    <span>{booking.customer_phone}</span>
-                                  </div>
-                                  <div className="text-sm text-gray-500 flex items-center space-x-2">
-                                    <MessageCircle className="w-3 h-3" />
-                                    <span>{booking.customer_whatsapp}</span>
-                                  </div>
-                                </div>
+                    ) : (
+                      filteredBookings.map((booking) => (
+                        <tr key={booking.id} className="hover:bg-gray-50">
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <div>
+                              <div className="text-sm font-medium text-gray-900">
+                                {booking.customer_name}
                               </div>
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap">
-                              <div className="text-sm text-gray-900">{booking.workspace_type}</div>
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap">
-                              <div className="text-sm text-gray-900">{new Date(booking.date).toLocaleDateString()}</div>
-                              <div className="text-sm text-gray-500">{booking.time_slot}</div>
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap">
-                              <div className="text-sm text-gray-900">{booking.duration}</div>
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap">
-                              <div className="text-sm text-gray-900">${booking.total_price}</div>
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap">
-                              <span
-                                className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                                  booking.status === 'confirmed'
-                                    ? 'bg-green-100 text-green-800'
-                                    : booking.status === 'pending'
-                                    ? 'bg-yellow-100 text-yellow-800'
-                                    : 'bg-red-100 text-red-800'
-                                }`}
-                              >
-                                {booking.status}
-                              </span>
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
-                              {(booking.status === 'pending' || booking.status === 'code_sent') && (
-                                <>
-                                  {booking.status === 'pending' && (
-                                    <button
-                                      onClick={() => handleConfirmBooking(booking.id)}
-                                      className="text-green-600 hover:text-green-900"
-                                      title="Send confirmation code"
-                                    >
-                                      <CheckCircle className="w-4 h-4" />
-                                    </button>
-                                  )}
-                                  <button
-                                    onClick={() => handleRejectBooking(booking.id)}
-                                    className="text-red-600 hover:text-red-900"
-                                    title="Reject booking"
-                                  >
-                                    <XCircle className="w-4 h-4" />
-                                  </button>
-                                </>
-                              )}
-                              {booking.status === 'confirmed' && (
-                                <button
-                                  onClick={() => startBookingSession(booking.id)}
-                                  className="text-blue-600 hover:text-blue-900"
-                                  title="Start booking session"
-                                >
-                                  <Play className="w-4 h-4" />
-                                </button>
-                              )}
-                              {canEditBooking(booking.status) && (
+                              <div className="text-sm text-gray-500">
+                                {booking.customer_email}
+                              </div>
+                              <div className="text-xs text-gray-400">
+                                {booking.customer_whatsapp}
+                              </div>
+                            </div>
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <div className="text-sm text-gray-900">{booking.workspace_type}</div>
+                            <div className="text-sm text-gray-500">{booking.duration}</div>
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <div className="text-sm text-gray-900">
+                              {new Date(booking.date).toLocaleDateString()}
+                            </div>
+                            <div className="text-sm text-gray-500">{booking.time_slot}</div>
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusColor(booking.status)}`}>
+                              {booking.status.replace('_', ' ').toUpperCase()}
+                            </span>
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                            E£{booking.total_price}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
+                            {booking.status === 'pending' && (
+                              <>
                                 <button
                                   onClick={() => {
-                                    setEditingBooking(booking.id);
-                                    setEditBookingData(booking);
+                                    const code = Math.random().toString(36).substring(2, 8).toUpperCase();
+                                    updateBookingStatus(booking.id, 'code_sent', code);
                                   }}
-                                  className="text-blue-600 hover:text-blue-900"
-                                  title="Edit booking"
+                                  className="bg-blue-500 text-white px-3 py-1 rounded text-xs font-semibold hover:bg-blue-600 transition-colors"
                                 >
-                                  <Edit className="w-4 h-4" />
+                                  Send Code
                                 </button>
-                              )}
-                              <button
-                                onClick={() => handleDeleteBooking(booking.id)}
-                                className="text-red-600 hover:text-red-900"
-                                title="Delete booking"
-                              >
-                                <Trash2 className="w-4 h-4" />
-                              </button>
-                            </td>
-                          </tr>
-                          {editingBooking === booking.id && (
-                            <tr>
-                              <td colSpan={7} className="px-6 py-4 bg-gray-50">
-                                <div className="space-y-4">
-                                  <h4 className="font-semibold text-gray-900">Edit Booking</h4>
-                                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                    <div>
-                                      <label className="block text-sm font-medium text-gray-700 mb-1">Date</label>
-                                      <input
-                                        type="date"
-                                        value={editBookingData.date || ''}
-                                        onChange={(e) =>
-                                          setEditBookingData((prev) => ({ ...prev, date: e.target.value }))
-                                        }
-                                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500"
-                                      />
-                                    </div>
-                                    <div>
-                                      <label className="block text-sm font-medium text-gray-700 mb-1">Time Slot</label>
-                                      <input
-                                        type="text"
-                                        value={editBookingData.time_slot || ''}
-                                        onChange={(e) =>
-                                          setEditBookingData((prev) => ({ ...prev, time_slot: e.target.value }))
-                                        }
-                                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500"
-                                      />
-                                    </div>
-                                    <div>
-                                      <label className="block text-sm font-medium text-gray-700 mb-1">Duration</label>
-                                      <select
-                                        value={editBookingData.duration || ''}
-                                        onChange={(e) =>
-                                          setEditBookingData((prev) => ({ ...prev, duration: e.target.value }))
-                                        }
-                                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500"
-                                      >
-                                        <option value="1-hour">1 Hour</option>
-                                        <option value="2-hours">2 Hours</option>
-                                        <option value="4-hours">4 Hours</option>
-                                        <option value="1-day">1 Day</option>
-                                        <option value="1-week">1 Week</option>
-                                        <option value="1-month">1 Month</option>
-                                      </select>
-                                    </div>
-                                    <div>
-                                      <label className="block text-sm font-medium text-gray-700 mb-1">Customer Name</label>
-                                      <input
-                                        type="text"
-                                        value={editBookingData.customer_name || ''}
-                                        onChange={(e) =>
-                                          setEditBookingData((prev) => ({ ...prev, customer_name: e.target.value }))
-                                        }
-                                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500"
-                                      />
-                                    </div>
-                                    <div>
-                                      <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
-                                      <input
-                                        type="email"
-                                        value={editBookingData.customer_email || ''}
-                                        onChange={(e) =>
-                                          setEditBookingData((prev) => ({ ...prev, customer_email: e.target.value }))
-                                        }
-                                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500"
-                                      />
-                                    </div>
-                                    <div>
-                                      <label className="block text-sm font-medium text-gray-700 mb-1">Total Price</label>
-                                      <input
-                                        type="number"
-                                        value={editBookingData.total_price || ''}
-                                        onChange={(e) =>
-                                          setEditBookingData((prev) => ({ ...prev, total_price: parseFloat(e.target.value) }))
-                                        }
-                                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500"
-                                      />
-                                    </div>
-                                  </div>
-                                  <div className="flex space-x-4">
-                                    <button
-                                      onClick={() => handleSaveBooking(editBookingData)}
-                                      className="bg-yellow-500 text-black px-4 py-2 rounded-md font-semibold hover:bg-yellow-600 transition-colors"
-                                    >
-                                      Save
-                                    </button>
-                                    <button
-                                      onClick={() => {
-                                        setEditingBooking(null);
-                                        setEditBookingData({});
-                                      }}
-                                      className="bg-gray-300 text-gray-700 px-4 py-2 rounded-md font-semibold hover:bg-gray-400 transition-colors"
-                                    >
-                                      Cancel
-                                    </button>
-                                  </div>
-                                </div>
-                              </td>
-                            </tr>
-                          )}
-                        </React.Fragment>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              )}
+                                <button
+                                  onClick={() => updateBookingStatus(booking.id, 'confirmed')}
+                                  className="bg-green-500 text-white px-3 py-1 rounded text-xs font-semibold hover:bg-green-600 transition-colors"
+                                >
+                                  <CheckCircle className="w-3 h-3 inline mr-1" />
+                                  Confirm
+                                </button>
+                                <button
+                                  onClick={() => updateBookingStatus(booking.id, 'rejected')}
+                                  className="bg-red-500 text-white px-3 py-1 rounded text-xs font-semibold hover:bg-red-600 transition-colors"
+                                >
+                                  <XCircle className="w-3 h-3 inline mr-1" />
+                                  Reject
+                                </button>
+                              </>
+                            )}
+
+                            {booking.status === 'confirmed' && booking.user_id && (
+                              <>
+                                {isBookingSessionActive(booking.id) ? (
+                                  <span className="bg-green-100 text-green-800 px-3 py-1 rounded text-xs font-semibold flex items-center">
+                                    <div className="w-2 h-2 bg-green-500 rounded-full mr-2 animate-pulse"></div>
+                                    Active
+                                  </span>
+                                ) : (
+                                  <button
+                                    onClick={() => startBookingSession(booking.id, booking.user_id)}
+                                    disabled={startingSession === booking.id}
+                                    className="bg-green-500 text-white px-3 py-1 rounded text-xs font-semibold hover:bg-green-600 transition-colors disabled:opacity-50 flex items-center"
+                                  >
+                                    {startingSession === booking.id ? (
+                                      <>
+                                        <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-white mr-1"></div>
+                                        Starting...
+                                      </>
+                                    ) : (
+                                      <>
+                                        <Play className="w-3 h-3 mr-1" />
+                                        Start Session
+                                      </>
+                                    )}
+                                  </button>
+                                )}
+                              </>
+                            )}
+
+                            {booking.status === 'code_sent' && (
+                              <div className="text-xs text-blue-600">
+                                Code: {booking.confirmation_code}
+                              </div>
+                            )}
+                          </td>
+                        </tr>
+                      ))
+                    )}
+                  </tbody>
+                </table>
+              </div>
             </div>
-          )}
+          </div>
+        )}
 
           {activeTab === 'analytics' && (
             <div>
