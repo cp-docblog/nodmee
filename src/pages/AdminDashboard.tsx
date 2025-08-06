@@ -93,7 +93,7 @@ const AdminDashboard: React.FC = () => {
     bookingDurations: ''
   });
   const [settingsSaving, setSettingsSaving] = useState(false);
-
+  const [filteredBookings, setFilteredBookings] = useState<Booking[]>([]);
   // Today's bookings visualization state
   const [todaysBookings, setTodaysBookings] = useState<Booking[]>([]);
   const [hourlySlots, setHourlySlots] = useState<string[]>([]);
